@@ -24,11 +24,14 @@ public class ConnectManager {
 	 */
 	public static Connection getConnection() throws SQLException{
 		Connection conn = LOCAL.get();
-		if (conn != null) {
-			return conn;
+		try {
+			if (null == conn || conn.isClosed()) {
+				conn = dataSource.getConnection();
+			}
+			LOCAL.set(conn);
+		} catch (SQLException e) {
+			e.printStackTrace();
 		}
-		conn = dataSource.getConnection();
-		LOCAL.set(conn);
 		return conn;
 	}
 	
